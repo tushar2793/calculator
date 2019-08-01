@@ -2,23 +2,30 @@
 
 class Calculator {
     	
-	function add()
+	function add($argv)
     {
-        $args = $_SERVER['argv'][2];
-        $replace_item = "\\;\\";
+		$result = 0;
+        $args = $argv[2];
+        $replace_item = "\\\\;\\\\";
         $expected_args = str_replace($replace_item, '', $args);
-        $replace_item = "\\";
-        $expected_args = str_replace($replace_item, '', $expected_args);
-        $replace_item = ";";
-        $expected_args = str_replace($replace_item, ',', $expected_args);
-        $params = explode(',', $expected_args);
-        $result = array_sum($params);
+        $params = explode(';', $expected_args);
+        foreach($params as $par) {
+			if(!is_numeric($par)) {
+				throw new Exception("Value must be numbers only");
+			}
+			$result += $par;
+		}
         return $result;
     }
 }
 
 $obj = new Calculator;
-$result = $obj->add();
-echo $result;
+try {
+	$result = $obj->add($argv);
+	echo $result;
+}
+catch(Exception $e) {
+    echo 'Message: ' .$e->getMessage();
+}
 
 ?>
